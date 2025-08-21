@@ -50,7 +50,7 @@ const PortfolioTable = ({ portfolio }: { portfolio: any[] }) => {
 
     const interval = setInterval(fetchData, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchData]);
 
   const columns = React.useMemo(() => getColumns(), []);
   const tableInstance = useTable({ columns, data: rows });
