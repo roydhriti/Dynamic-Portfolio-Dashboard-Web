@@ -14,43 +14,85 @@ const PortfolioTable = ({ portfolio }: { portfolio: any[] }) => {
 
   console.log("portfolio: ", portfolio);
 
-  const fetchData = async () => {
-    console.log("Stock data api call: ");
+  // const fetchData = async () => {
+  //   console.log("Stock data api call: ");
 
-    const totalInvestment = portfolio.reduce(
-      (acc, s) => acc + s.purchasePrice * s.quantity,
-      0
-    );
+  //   const totalInvestment = portfolio.reduce(
+  //     (acc, s) => acc + s.purchasePrice * s.quantity,
+  //     0
+  //   );
 
-    const updatedData = await Promise.all(
-      portfolio?.map(async (stock) => {
-        const result = await fetchStockDataAPI(stock?.symbol);
-        console.log("Fetched data:", result);
+  //   const updatedData = await Promise.all(
+  //     portfolio?.map(async (stock) => {
+  //       const result = await fetchStockDataAPI(stock?.symbol);
+  //       console.log("Fetched data:", result);
 
-        if (result.error) return { ...stock, error: true };
-        const { cmp, peRatio, earnings, sector } = result;
+  //       if (result.error) return { ...stock, error: true };
+  //       const { cmp, peRatio, earnings, sector } = result;
 
-        return calculateMetrics({
-          ...stock,
-          totalInvestment,
-          cmp,
-          peRatio,
-          earnings,
-          sector,
-        });
-      })
-    );
+  //       return calculateMetrics({
+  //         ...stock,
+  //         totalInvestment,
+  //         cmp,
+  //         peRatio,
+  //         earnings,
+  //         sector,
+  //       });
+  //     })
+  //   );
 
-    setRows(updatedData);
-  };
+  //   setRows(updatedData);
+  // };
+
+  // useEffect(() => {
+  //   fetchData();
+  //   console.log("Stock data api call 1: ");
+
+  //   const interval = setInterval(fetchData, 15000);
+  //   return () => clearInterval(interval);
+  // }, [fetchData]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      console.log("Stock data api call: ");
+
+      const totalInvestment = portfolio.reduce(
+        (acc, s) => acc + s.purchasePrice * s.quantity,
+        0
+      );
+
+      const updatedData = await Promise.all(
+        portfolio?.map(async (stock) => {
+          const result = await fetchStockDataAPI(stock?.symbol);
+          console.log("Fetched data:", result);
+
+          if (result.error) return { ...stock, error: true };
+          const { cmp, peRatio, earnings, sector } = result;
+
+          return calculateMetrics({
+            ...stock,
+            totalInvestment,
+            cmp,
+            peRatio,
+            earnings,
+            sector,
+          });
+        })
+      );
+
+      setRows(updatedData);
+    };
+
+    // Call once immediately
     fetchData();
     console.log("Stock data api call 1: ");
 
+    // Call every 15 seconds
     const interval = setInterval(fetchData, 15000);
+
+    // Cleanup
     return () => clearInterval(interval);
-  }, [fetchData]);
+  }, [portfolio]);
 
   const columns = React.useMemo(() => getColumns(), []);
   const tableInstance = useTable({ columns, data: rows });
