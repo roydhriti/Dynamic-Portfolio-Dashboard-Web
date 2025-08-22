@@ -53,6 +53,8 @@ const PortfolioTable = ({ portfolio }: { portfolio: any[] }) => {
   // }, [fetchData]);
 
   useEffect(() => {
+
+
     const fetchData = async () => {
       console.log("Stock data api call: ");
 
@@ -67,7 +69,9 @@ const PortfolioTable = ({ portfolio }: { portfolio: any[] }) => {
           console.log("Fetched data:", result);
 
           if (result.error) return { ...stock, error: true };
-          const { cmp, peRatio, earnings, sector } = result;
+          const { cmp, peRatio, earnings, sector, } = result;
+
+          // setLastUpdated(lastUpdated);
 
           return calculateMetrics({
             ...stock,
@@ -147,6 +151,7 @@ const PortfolioTable = ({ portfolio }: { portfolio: any[] }) => {
           ))}
         </tbody>
       </table>
+
     </div>
   );
 };
